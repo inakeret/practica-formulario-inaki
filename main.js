@@ -6,8 +6,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const formRegistro = document.querySelector("#formulario-registro");
   const formRobo = document.querySelector("#formulario-robo");
 
-  formRegistro.addEventListener("submit", (ev) => validarFormulario(ev, "registro"));
-  formRobo.addEventListener("submit", (ev) => validarFormulario(ev, "robo"));
+  formRegistro.addEventListener("submit", (ev) =>{
+    ev.preventDefault(); // Evita el envío real del formulario
+    //validarFormulario(ev, "registro");
+    console.log(ev.target.elements)
+  });
+
+  formRobo.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    validarFormulario(ev.target.elements, "robo")
+  });
+  
+  
 });
 
 /**
@@ -17,17 +27,17 @@ document.addEventListener("DOMContentLoaded", () => {
  * @param {Event} ev - Evento de envío del formulario.
  * @param {string} tipo - Tipo de formulario ("registro" o "robo").
  */
-const validarFormulario = (ev, tipo) => {
-  ev.preventDefault(); // Evita el envío real del formulario
+const validarFormulario = (form, tipo) => {
+  
 
   let valido = true; // Indicador general de validación
 
   /** ---------- FORMULARIO DE REGISTRO ---------- */
   if (tipo === "registro") {
-    const nombre = document.querySelector("#nombre").value.trim();
-    const apellidos = document.querySelector("#apellidos").value.trim();
-    const edad = document.querySelector("#edad").value.trim();
-    const email = document.querySelector("#email").value.trim();
+    const nombre = form['nombre'].value.trim();
+    const apellidos = form['apellidos'].value.trim();
+    const edad = form['edad'].value.trim();
+    const email = form['email'].value.trim();
 
     if (!validarNombre(nombre)) valido = false;
     if (!validarApellidos(apellidos)) valido = false;
@@ -35,18 +45,20 @@ const validarFormulario = (ev, tipo) => {
     if (!validarEmail(email)) valido = false;
   }
 
-  /** ---------- FORMULARIO DE ROBO DE BICICLETA ---------- */
+  /* ---------- FORMULARIO DE ROBO DE BICICLETA ---------- */
   if (tipo === "robo") {
-    const dia = document.querySelector("#dia").value.trim();
-    const hora = document.querySelector("#hora").value.trim();
-    const tipoBici = document.querySelector("#tipo").value.trim();
+    const dia = form['dia'].value.trim();
+    const hora = form['hora'].value.trim();
+    const precio = form['precio'].value.trim()
+    const tipoBici = form['tipo'].value.trim();
 
     if (!validarDia(dia)) valido = false;
     if (!validarHora(hora)) valido = false;
+    if(!validarPrecio(precio))valido = false
     if (!validarTipo(tipoBici)) valido = false;
   }
 
-  /** ---------- RESULTADO FINAL ---------- */
+  /* ---------- RESULTADO FINAL ---------- */
   if (valido) {
     alert(`Formulario de ${tipo} enviado correctamente.`);
   } else {
@@ -133,6 +145,18 @@ const validarHora = (hora) => {
   }
   return true;
 };
+
+/**
+ * Comprueba que el rango del precio sea válido
+ * @param {number} precio precio del producto 
+ * @returns {boolean}
+ */
+const validarPrecio = (precio) => {
+  if(precio<0 ||precio> 60000){
+    alert("Debes indicar un precio valido")
+    return false
+  }else return true
+}
 
 /**
  * Comprueba que se haya seleccionado un tipo de bicicleta.
